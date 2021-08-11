@@ -15,6 +15,9 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
+            'dependencies' => [
+                SettingsRepository::class => SettingsManager::class,
+            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [
