@@ -26,8 +26,8 @@ class ConfigProvider
                 [
                     'id' => 'migration',
                     'description' => 'The migration file for settings.',
-                    'source' => __DIR__ . '/../publish/2021_07_02_143511_create_settings_table.php',
-                    'destination' => BASE_PATH . '/migrations/2021_07_02_143511_create_settings_table.php',
+                    'source' => __DIR__ . '/../publish/2014_03_01_121230_create_settings_table.php',
+                    'destination' => BASE_PATH . '/migrations/2014_03_01_121230_create_settings_table.php',
                 ],
             ],
         ];
