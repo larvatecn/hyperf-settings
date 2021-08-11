@@ -9,33 +9,22 @@ namespace Larva\Settings;
 
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
-use Psr\Container\ContainerInterface;
 
 class SettingsManager implements SettingsRepository
 {
-    const CACHE_TAG = "settings";
-
-    /**
-     * The container instance.
-     *
-     * @var ContainerInterface
-     */
-    protected ContainerInterface $container;
-
     /**
      * @var Collection
      */
-    protected Collection $settings;
+    protected ?Collection $settings;
 
     /**
      * Create a new instance.
      *
-     * @param ContainerInterface $container
      * @return void
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $this->container = $container;
+        $this->all(true);
     }
 
     /**
@@ -45,8 +34,7 @@ class SettingsManager implements SettingsRepository
      */
     public function all(bool $reload = false): Collection
     {
-        $cache = $this->container->get(\Psr\SimpleCache\CacheInterface::class);
-        if (($settings = $cache->get(static::CACHE_TAG)) == null || $reload) {
+        if (!$this->settings || $reload) {
             $settings = [];
             SettingEloquent::all()->each(function ($setting) use (&$settings) {
                 switch ($setting['cast_type']) {
@@ -66,9 +54,8 @@ class SettingsManager implements SettingsRepository
                 }
                 Arr::set($settings, $setting['key'], $value);
             });
-            $cache->set(static::CACHE_TAG, $settings,3600);
+            $this->settings = collect($settings);
         }
-        $this->settings = collect($settings);
         return $this->settings;
     }
 
