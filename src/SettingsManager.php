@@ -25,7 +25,7 @@ class SettingsManager implements SettingsRepository
     /**
      * @var Collection
      */
-    protected ?Collection $settings = null;
+    protected Collection $settings;
 
     /**
      * Create a new instance.
