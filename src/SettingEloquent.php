@@ -11,7 +11,7 @@ use Hyperf\DbConnection\Model\Model;
 
 class SettingEloquent extends Model
 {
-    const CREATED_AT = null;
+    public const CREATED_AT = null;
 
     /**
      * The table associated with the model.

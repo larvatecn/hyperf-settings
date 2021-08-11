@@ -15,7 +15,7 @@ class SettingsManager implements SettingsRepository
     /**
      * @var Collection
      */
-    protected ?Collection $settings;
+    protected Collection $settings;
 
     /**
      * Create a new instance.
@@ -24,7 +24,7 @@ class SettingsManager implements SettingsRepository
      */
     public function __construct()
     {
-        $this->all(true);
+        $this->settings = new Collection();
     }
 
     /**
@@ -34,7 +34,7 @@ class SettingsManager implements SettingsRepository
      */
     public function all(bool $reload = false): Collection
     {
-        if (!$this->settings || $reload) {
+        if ($this->settings->isEmpty() || $reload) {
             $settings = [];
             SettingEloquent::all()->each(function ($setting) use (&$settings) {
                 switch ($setting['cast_type']) {
