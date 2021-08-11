@@ -13,8 +13,7 @@
     "hyperf/config": "^2.2",
     "hyperf/database": "^2.2",
     "hyperf/db-connection": "^2.2",
-    "hyperf/utils": "^2.2",
-    "hyperf/cache": "^2.2"
+    "hyperf/utils": "^2.2"
   },
   "require-dev": {
     "swoole/ide-helper": "^4.5"
