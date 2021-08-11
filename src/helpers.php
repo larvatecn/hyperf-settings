@@ -8,7 +8,7 @@
 use Hyperf\Utils\ApplicationContext;
 use Larva\Settings\SettingsRepository;
 
-if (!function_exists('setting')) {
+if (!function_exists('settings')) {
     /**
      * Get setting value or object.
      *
@@ -16,7 +16,7 @@ if (!function_exists('setting')) {
      * @param mixed|null $default
      * @return SettingsRepository|mixed
      */
-    function setting(string $key = '', $default = null)
+    function settings(string $key = '', $default = null)
     {
         if (!ApplicationContext::hasContainer()) {
             throw new \RuntimeException('The application context lacks the container.');
