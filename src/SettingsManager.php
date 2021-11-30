@@ -21,6 +21,35 @@ class SettingsManager implements SettingsRepository
     protected string $cacheKey = 'system:settings';
 
     /**
+     * 变量类型
+     * @var string
+     */
+    protected string $castTypes = 'system:settings:cast_types';
+
+    /**
+     * 缓存时间
+     * @var int
+     */
+    protected int $cacheTTL = 3600;
+
+    /**
+     * 将数据库配置刷到 Redis
+     */
+    public function refresh()
+    {
+        $settings = [];
+        $castTypes = [];
+        SettingEloquent::all()->each(function ($setting) use (&$settings, &$castTypes) {
+            $castTypes[$setting['key']] = $setting['cast_type'];
+            $settings[$setting['key']] = $setting['value'];
+        });
+        $this->redis()->hMSet($this->cacheKey, $settings);
+        $this->redis()->hMSet($this->castTypes, $castTypes);
+        $this->redis()->expire($this->cacheKey, $this->cacheTTL);
+        $this->redis()->expire($this->castTypes, $this->cacheTTL);
+    }
+
+    /**
      * 获取所有的设置
      * @param boolean $reload 是否重载
      * @return Collection
@@ -30,7 +59,28 @@ class SettingsManager implements SettingsRepository
         if ($reload) {
             $this->refresh();
         }
-        $settings = $this->redis()->hGetAll($this->cacheKey);
+        $data = $this->redis()->hGetAll($this->cacheKey);
+        $castTypes = $this->redis()->hGetAll($this->castTypes);
+        $settings = [];
+        foreach ($data as $key => $setting) {
+            $castType = $castTypes[$key] ?? 'string';
+            switch ($castType) {
+                case 'int':
+                case 'integer':
+                    $value = (int)$setting;
+                    break;
+                case 'float':
+                    $value = (float)$setting;
+                    break;
+                case 'boolean':
+                case 'bool':
+                    $value = (bool)$setting;
+                    break;
+                default:
+                    $value = $setting;
+            }
+            Arr::set($settings, $key, $value);
+        }
         return collect($settings);
     }
 
@@ -96,34 +146,6 @@ class SettingsManager implements SettingsRepository
         SettingEloquent::query()->where('key', '=', $key)->delete();
         $this->refresh();//刷到Redis
         return true;
-    }
-
-    /**
-     * 将数据库配置刷到 Redis
-     */
-    public function refresh()
-    {
-        $settings = [];
-        SettingEloquent::all()->each(function ($setting) use (&$settings) {
-            switch ($setting['cast_type']) {
-                case 'int':
-                case 'integer':
-                    $value = (int)$setting['value'];
-                    break;
-                case 'float':
-                    $value = (float)$setting['value'];
-                    break;
-                case 'boolean':
-                case 'bool':
-                    $value = (bool)$setting['value'];
-                    break;
-                default:
-                    $value = $setting['value'];
-            }
-            Arr::set($settings, $setting['key'], $value);
-        });
-        $this->redis()->hMSet($this->cacheKey, $settings);
-        $this->redis()->expire($this->cacheKey, 60);
     }
 
     /**
