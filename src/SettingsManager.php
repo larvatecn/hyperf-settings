@@ -7,56 +7,31 @@
 
 namespace Larva\Settings;
 
+use Hyperf\Redis\Redis;
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Arr;
 use Hyperf\Utils\Collection;
 
 class SettingsManager implements SettingsRepository
 {
     /**
-     * @var Collection
+     * 缓存 Key
+     * @var string
      */
-    protected Collection $settings;
-
-    /**
-     * Create a new instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->settings = new Collection();
-    }
+    protected string $cacheKey = 'system:settings';
 
     /**
      * 获取所有的设置
-     * @param bool $reload
+     * @param boolean $reload 是否重载
      * @return Collection
      */
     public function all(bool $reload = false): Collection
     {
-        if ($this->settings->isEmpty() || $reload) {
-            $settings = [];
-            SettingEloquent::all()->each(function ($setting) use (&$settings) {
-                switch ($setting['cast_type']) {
-                    case 'int':
-                    case 'integer':
-                        $value = (int)$setting['value'];
-                        break;
-                    case 'float':
-                        $value = (float)$setting['value'];
-                        break;
-                    case 'boolean':
-                    case 'bool':
-                        $value = (bool)$setting['value'];
-                        break;
-                    default:
-                        $value = $setting['value'];
-                }
-                Arr::set($settings, $setting['key'], $value);
-            });
-            $this->settings = collect($settings);
+        if ($reload) {
+            $this->refresh();
         }
-        return $this->settings;
+        $settings = $this->redis()->hGetAll($this->cacheKey);
+        return collect($settings);
     }
 
     /**
@@ -107,7 +82,7 @@ class SettingsManager implements SettingsRepository
         $query = SettingEloquent::query()->where('key', '=', $key);
         $method = $query->exists() ? 'update' : 'insert';
         $query->$method(compact('key', 'value', 'cast_type'));
-        $this->all(true);//重载
+        $this->refresh();//刷到Redis
         return true;
     }
 
@@ -119,7 +94,44 @@ class SettingsManager implements SettingsRepository
     public function forge(string $key): bool
     {
         SettingEloquent::query()->where('key', '=', $key)->delete();
-        $this->all(true);//重载
+        $this->refresh();//刷到Redis
         return true;
+    }
+
+    /**
+     * 将数据库配置刷到 Redis
+     */
+    public function refresh()
+    {
+        $settings = [];
+        SettingEloquent::all()->each(function ($setting) use (&$settings) {
+            switch ($setting['cast_type']) {
+                case 'int':
+                case 'integer':
+                    $value = (int)$setting['value'];
+                    break;
+                case 'float':
+                    $value = (float)$setting['value'];
+                    break;
+                case 'boolean':
+                case 'bool':
+                    $value = (bool)$setting['value'];
+                    break;
+                default:
+                    $value = $setting['value'];
+            }
+            Arr::set($settings, $setting['key'], $value);
+        });
+        $this->redis()->hMSet($this->cacheKey, $settings);
+        $this->redis()->expire($this->cacheKey, 60);
+    }
+
+    /**
+     * 获取Redis连接实例.
+     * @return mixed|Redis
+     */
+    public function redis()
+    {
+        return ApplicationContext::getContainer()->get(Redis::class);
     }
 }
