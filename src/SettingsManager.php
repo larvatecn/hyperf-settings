@@ -27,12 +27,6 @@ class SettingsManager implements SettingsRepository
     protected string $castTypes = 'system:settings:cast_types';
 
     /**
-     * 缓存时间
-     * @var int
-     */
-    protected int $cacheTTL = 3600;
-
-    /**
      * 将数据库配置刷到 Redis
      */
     public function refresh()
@@ -45,8 +39,6 @@ class SettingsManager implements SettingsRepository
         });
         $this->redis()->hMSet($this->cacheKey, $settings);
         $this->redis()->hMSet($this->castTypes, $castTypes);
-        $this->redis()->expire($this->cacheKey, $this->cacheTTL);
-        $this->redis()->expire($this->castTypes, $this->cacheTTL);
     }
 
     /**
