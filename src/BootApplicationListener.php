@@ -1,11 +1,6 @@
 <?php
 
 declare(strict_types=1);
-/**
- * This is NOT a freeware, use is subject to license terms.
- * @copyright Copyright (c) 2021-2099 Jinan Jiyuan Information Technology Co., Ltd.
- * @link http://www.jiyuanmed.cn/
- */
 
 namespace Larva\Settings;
 
