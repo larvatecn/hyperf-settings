@@ -18,9 +18,6 @@ class ConfigProvider
             'dependencies' => [
                 SettingsRepository::class => SettingsManager::class,
             ],
-            'listeners' => [
-                BootApplicationListener::class,
-            ],
             'annotations' => [
                 'scan' => [
                     'paths' => [

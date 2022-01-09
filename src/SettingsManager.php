@@ -27,6 +27,14 @@ class SettingsManager implements SettingsRepository
     protected string $castTypes = 'system:settings:cast_types';
 
     /**
+     * 构造方法
+     */
+    public function __construct()
+    {
+        $this->all(true);
+    }
+
+    /**
      * 将数据库配置刷到 Redis
      */
     public function refresh()
