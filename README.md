@@ -1,9 +1,12 @@
 # hyperf-settings
 
-适用于 Hyperf 的配置组件。
+<p align="center">
+    <a href="https://packagist.org/packages/larva/hyperf-settings"><img src="https://poser.pugx.org/larva/hyperf-settings/v/stable" alt="Stable Version"></a>
+    <a href="https://packagist.org/packages/larva/hyperf-settings"><img src="https://poser.pugx.org/larva/hyperf-settings/downloads" alt="Total Downloads"></a>
+    <a href="https://packagist.org/packages/larva/hyperf-settings"><img src="https://poser.pugx.org/larva/hyperf-settings/license" alt="License"></a>
+</p>
 
-[![Packagist](https://img.shields.io/packagist/l/larva/hyperf-settings.svg?maxAge=2592000)](https://packagist.org/packages/larva/hyperf-settings)
-[![Total Downloads](https://img.shields.io/packagist/dt/larva/hyperf-settings.svg?style=flat-square)](https://packagist.org/packages/larva/hyperf-settings)
+适用于 Hyperf 的配置组件。
 
 ## 安装
 
