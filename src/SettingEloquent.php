@@ -1,9 +1,4 @@
 <?php
-/**
- * This is NOT a freeware, use is subject to license terms
- * @copyright Copyright (c) 2010-2099 Jinan JiYuan Information Technology Co., Ltd.
- * @link https://www.yaoqiyuan.com/
- */
 
 namespace Larva\Settings;
 
@@ -18,13 +13,13 @@ class SettingEloquent extends Model
      *
      * @var string
      */
-    protected $table = 'settings';
+    protected ?string $table = 'settings';
 
     /**
      * 允许批量赋值的属性
      * @var array
      */
-    public $fillable = [
+    public array $fillable = [
         'key', 'value', 'cast_type'
     ];
 
@@ -33,7 +28,7 @@ class SettingEloquent extends Model
      *
      * @var array
      */
-    protected $dates = [
+    protected array $dates = [
         'updated_at',
     ];
 }

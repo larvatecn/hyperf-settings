@@ -9,12 +9,12 @@
   "type": "library",
   "license": "MIT",
   "require": {
-    "php": ">= 7.4",
-    "hyperf/config": "^2.2",
-    "hyperf/database": "^2.2",
-    "hyperf/db-connection": "^2.2",
-    "hyperf/redis": "^2.2",
-    "hyperf/utils": "^2.2"
+    "php": ">= 8.0.2",
+    "hyperf/config": "^3.0",
+    "hyperf/database": "^3.0",
+    "hyperf/db-connection": "^3.0",
+    "hyperf/redis": "^3.0",
+    "hyperf/utils": "^3.0"
   },
   "require-dev": {
     "swoole/ide-helper": "^4.5"
@@ -29,7 +29,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "1.0-dev"
+      "dev-master": "2.0-dev"
     },
     "hyperf": {
       "config": "Larva\\Settings\\ConfigProvider"

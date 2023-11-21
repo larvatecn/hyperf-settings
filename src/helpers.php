@@ -1,11 +1,6 @@
 <?php
-/**
- * This is NOT a freeware, use is subject to license terms
- * @copyright Copyright (c) 2010-2099 Jinan JiYuan Information Technology Co., Ltd.
- * @link https://www.yaoqiyuan.com/
- */
 
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use Larva\Settings\SettingsRepository;
 
 if (!function_exists('settings')) {

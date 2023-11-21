@@ -1,16 +1,11 @@
 <?php
-/**
- * This is NOT a freeware, use is subject to license terms
- * @copyright Copyright (c) 2010-2099 Jinan JiYuan Information Technology Co., Ltd.
- * @link https://www.yaoqiyuan.com/
- */
 
 namespace Larva\Settings;
 
 use Hyperf\Redis\Redis;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Collection;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Collection\Arr;
+use Hyperf\Collection\Collection;
 
 class SettingsManager implements SettingsRepository
 {
@@ -37,7 +32,7 @@ class SettingsManager implements SettingsRepository
     /**
      * 将数据库配置刷到 Redis
      */
-    public function refresh()
+    public function refresh(): void
     {
         $settings = [];
         $castTypes = [];
@@ -53,6 +48,7 @@ class SettingsManager implements SettingsRepository
      * 获取所有的设置
      * @param boolean $reload 是否重载
      * @return Collection
+     * @throws \RedisException
      */
     public function all(bool $reload = false): Collection
     {
@@ -64,24 +60,15 @@ class SettingsManager implements SettingsRepository
         $settings = [];
         foreach ($data as $key => $setting) {
             $castType = $castTypes[$key] ?? 'string';
-            switch ($castType) {
-                case 'int':
-                case 'integer':
-                    $value = (int)$setting;
-                    break;
-                case 'float':
-                    $value = (float)$setting;
-                    break;
-                case 'boolean':
-                case 'bool':
-                    $value = (bool)$setting;
-                    break;
-                default:
-                    $value = $setting;
-            }
+            $value = match ($castType) {
+                'int', 'integer' => (int)$setting,
+                'float' => (float)$setting,
+                'boolean', 'bool' => (bool)$setting,
+                default => $setting,
+            };
             Arr::set($settings, $key, $value);
         }
-        return collect($settings);
+        return \Hyperf\Collection\collect($settings);
     }
 
     /**
